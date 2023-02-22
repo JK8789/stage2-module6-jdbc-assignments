@@ -41,8 +41,7 @@ public class SimpleJDBCRepository {
                 id = rs.getLong(1);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            System.out.println(ex + " Person is NOT created");
+            throw new RuntimeException(ex);
         }
         return id;
     }
@@ -61,7 +60,7 @@ public class SimpleJDBCRepository {
                 user.setAge(resultSet.getInt("age"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return user;
     }
@@ -78,7 +77,7 @@ public class SimpleJDBCRepository {
                         .lastName(rs.getString("lastname")).age(rs.getInt("age")).build();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return user;
     }
@@ -131,8 +130,7 @@ public class SimpleJDBCRepository {
                 System.out.println("User with ID=" + userId + " deleted successfully.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println(e + " Person is NOT delete");
+            throw new RuntimeException(e);
         }
     }
 
