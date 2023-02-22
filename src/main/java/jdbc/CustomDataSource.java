@@ -29,20 +29,16 @@ public class CustomDataSource implements DataSource {
         this.url = url;
         this.password = password;
         this.name = name;
+        instance = this;
     }
 
     public static CustomDataSource getInstance() {
         if (instance == null) {
             synchronized (MONITOR) {
                 if (instance == null) {
-                    try (InputStream input = CustomDataSource.class.getClassLoader().getResourceAsStream("app.properties");) {
+                    try {
                         Properties properties = new Properties();
-                        if (input == null) {
-                            System.out.println("Sorry, unable to find config.properties");
-                            return null;
-                        }
-
-                        properties.load(input);
+                        properties.load(CustomDataSource.class.getClassLoader().getResourceAsStream("app.properties"));
                         instance = new CustomDataSource(
                                 properties.getProperty("postgres.driver"),
                                 properties.getProperty("postgres.url"),

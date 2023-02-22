@@ -1,6 +1,5 @@
 package jdbc;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,17 +27,17 @@ public class SimpleJDBCRepository {
     private static final String findAllUserSQL = "SELECT id, firstname, lastname, age FROM myusers";
 
     public Long createUser() throws SQLException {
-        Long id = null;
+        long id = 0L;
         User user = new User();
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(createUserSQL,
+        try (Connection connection = CustomDataSource.getInstance().getConnection();
+             PreparedStatement ps = connection.prepareStatement(createUserSQL,
                      Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setObject(1, user.getFirstName());
-            pstmt.setObject(2, user.getLastName());
-            pstmt.setObject(3, user.getAge());
-            pstmt.execute();
-            ResultSet rs = pstmt.getGeneratedKeys();
+            ps.setObject(1, user.getFirstName());
+            ps.setObject(2, user.getLastName());
+            ps.setObject(3, user.getAge());
+            ps.execute();
+            ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 id = rs.getLong(1);
             }
@@ -87,9 +86,9 @@ public class SimpleJDBCRepository {
 
     public List<User> findAllUser() {
         List<User> allUsers = new ArrayList<>();
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(findAllUserSQL)) {
-            ResultSet rs = pstmt.executeQuery();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(findAllUserSQL)) {
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 User user = new User();
                 user.setId(rs.getLong("id"));
@@ -105,8 +104,8 @@ public class SimpleJDBCRepository {
     }
 
     public User updateUser(User user) {
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(updateUserSQL)) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(updateUserSQL)) {
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
             ps.setInt(3, user.getAge());
@@ -116,7 +115,7 @@ public class SimpleJDBCRepository {
                 return user;
             }
             ps.close();
-            conn.close();
+            connection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
