@@ -26,7 +26,7 @@ public class SimpleJDBCRepository {
     private static final String findUserByNameSQL = "SELECT id, firstname, lastname, age FROM myusers WHERE firstname LIKE CONCAT('%', ?, '%')";
     private static final String findAllUserSQL = "SELECT id, firstname, lastname, age FROM myusers";
 
-    public Long createUser(User user) throws SQLException {
+    public Long createUser(User user){
         long id = 0L;
         try (Connection connection = CustomDataSource.getInstance().getConnection();
              PreparedStatement ps = connection.prepareStatement(createUserSQL,
@@ -65,7 +65,7 @@ public class SimpleJDBCRepository {
         return user;
     }
 
-    public User findUserByName(String userName) throws SQLException {
+    public User findUserByName(String userName) {
         User user = new User();
 
         try (Connection connection = dataSource.getConnection();
